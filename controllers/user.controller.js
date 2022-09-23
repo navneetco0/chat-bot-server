@@ -22,7 +22,7 @@ const login =  async (req, res) => {
         .status(400)
         .send({ message: 'Either Email or Password is incorrect' })
 
-    const match = user.checkPassword(req.body.password)
+    const match = User.checkPassword(req.body.password)
 
     if (!match)
       return res
@@ -36,14 +36,14 @@ const login =  async (req, res) => {
     );
 
     return res.status(201).send({ 
-        // profile_pic: user.profile_pic,
-        // first_name: user.first_name,
-        // last_name: user.last_name,
-        // phone: user.phone,
-        // email: user.email,
-        // dob: user.dob,
-        // languages: user.languages,
-        // gender: user.gender,
+        profile_pic: user.profile_pic,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        phone: user.phone,
+        email: user.email,
+        dob: user.dob,
+        languages: user.languages,
+        gender: user.gender,
       token })
   } catch (err) {
     return res.status(500).send({ message: err.message })
