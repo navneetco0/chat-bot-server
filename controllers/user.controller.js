@@ -1,12 +1,8 @@
 const express = require('express')
 require('dotenv').config()
-const fs = require('fs')
 const User = require('../models/User.model')
 const jwt = require('jsonwebtoken')
-const upload = require('../helpers/filehelper')
 const singleFile = require('../models/profilepic')
-
-const router = express.Router();
 
 const fileSizeFormatter = (bytes, decimal)=>{
   if(bytes===0){
@@ -18,10 +14,9 @@ const fileSizeFormatter = (bytes, decimal)=>{
   return parseFloat((bytes/Math.pow(1000, index)).toFixed(dm))+'-'+sizes[index]
 }
 
-router.post('/login', async (req, res) => {
+const login =  async (req, res) => {
   try {
     let user = await User.findOne({ email: req.body.email });
-
     if (!user)
       return res
         .status(400)
@@ -35,30 +30,27 @@ router.post('/login', async (req, res) => {
         .send({ message: 'Either Email or Password is incorrect' })
 
     const token = jwt.sign(
-      { id: user._id, username: user.username },
+      { id: user._id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: '900s' },
     );
 
     return res.status(201).send({ 
-        profile_pic: user.profile_pic,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        phone: user.phone,
-        email: user.email,
-        dob: user.dob,
-        languages: user.languages,
-        gender: user.gender,
+        // profile_pic: user.profile_pic,
+        // first_name: user.first_name,
+        // last_name: user.last_name,
+        // phone: user.phone,
+        // email: user.email,
+        // dob: user.dob,
+        // languages: user.languages,
+        // gender: user.gender,
       token })
   } catch (err) {
     return res.status(500).send({ message: err.message })
   }
-})
+}
 
-router.post(
-  '/register',
-  upload.single('file'),
-  async (req, res) => {
+const register = async (req, res) => {
     try {
       let user =
       (await User.findOne({ email: req.body.email })) ||
@@ -70,7 +62,6 @@ router.post(
         fileType:req.file.mimetype,
         fileSize:fileSizeFormatter(req.file.size, 2)
       });
-      // console.log(req.body, file)
       
       if (user?.phone)
         return res
@@ -108,7 +99,6 @@ router.post(
     } catch (err) {
       return res.status(500).send({ message: err.message })
     }
-  },
-)
+  }
 
-module.exports = router
+module.exports = {login, register}
