@@ -22,7 +22,7 @@ const login =  async (req, res) => {
         .status(400)
         .send({ message: 'Either Email or Password is incorrect' })
 
-    const match = User.checkPassword(req.body.password)
+    const match = user.checkPassword(req.body.password)
 
     if (!match)
       return res
