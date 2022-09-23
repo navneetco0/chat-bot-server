@@ -20,7 +20,7 @@ const fileSizeFormatter = (bytes, decimal)=>{
 
 router.post('/login', async (req, res) => {
   try {
-    let user = await User.findOne({ email: req.body.email })
+    let user = await User.findOne({ email: req.body.email });
 
     if (!user)
       return res
@@ -38,8 +38,18 @@ router.post('/login', async (req, res) => {
       { id: user._id, username: user.username },
       process.env.JWT_SECRET,
       { expiresIn: '900s' },
-    )
-    return res.status(201).send({ token })
+    );
+
+    return res.status(201).send({ 
+        profile_pic: user.profile_pic,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        phone: user.phone,
+        email: user.email,
+        dob: user.dob,
+        languages: user.languages,
+        gender: user.gender,
+      token })
   } catch (err) {
     return res.status(500).send({ message: err.message })
   }
@@ -60,7 +70,7 @@ router.post(
         fileType:req.file.mimetype,
         fileSize:fileSizeFormatter(req.file.size, 2)
       });
-      console.log(req.body, file)
+      // console.log(req.body, file)
       
       if (user?.phone)
         return res
