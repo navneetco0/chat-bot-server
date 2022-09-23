@@ -32,7 +32,6 @@ const login =  async (req, res) => {
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: '900s' },
     );
 
     return res.status(201).send({ 
@@ -92,8 +91,7 @@ const register = async (req, res) => {
       if (user)
         token = jwt.sign(
           { id: user._id, username: user.username },
-          process.env.JWT_SECRET,
-          { expiresIn: '900s' },
+          process.env.JWT_SECRET
         )
       return res.status(201).send({ token })
     } catch (err) {
