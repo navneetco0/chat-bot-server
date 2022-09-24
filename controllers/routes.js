@@ -88,9 +88,9 @@ router.patch('/', async (req, res) => {
           { _id: id },
           { password: req.body.mng_password.new_password },
           { new: true },
-        )
+        );
+        return res.send('updated successfully')
       }
-      return res.send(user)
     }
   } catch (error) {
     res.status(500).send(error)
