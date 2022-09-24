@@ -3,7 +3,8 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User.model')
 const bcrypt = require("bcryptjs");
 const upload = require('../helpers/filehelper');
-const router = express.Router()
+const singleFile = require('../models/profilepic');
+const router = express.Router();
 
 
 const fileSizeFormatter = (bytes, decimal) => {
@@ -73,7 +74,7 @@ router.patch('/', upload.single('file'), async (req, res) => {
           { profile_pic: file },
           { new: true },
         )
-        return res.status(200).send('profile picture updated successfully.')
+        return res.send('profile picture updated successfully.')
     //   } 
     // else 
     // if (req.body.profile) {
