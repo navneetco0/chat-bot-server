@@ -1,9 +1,11 @@
 const express = require('express')
 const jwt = require('jsonwebtoken')
+const fs = require('fs');
 const User = require('../models/User.model')
 const bcrypt = require("bcryptjs");
 const upload = require('../helpers/filehelper');
 const singleFile = require('../models/profilepic');
+const { constants } = require('fs/promises');
 const router = express.Router();
 
 
@@ -55,11 +57,10 @@ router.patch('/', upload.single('file'), async (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const { id } = decoded
-    console.log(req.file)
     let user = await User.findById({_id:id});
-
     if (user) {
       if (req.file) {
+        console.log(req.file)
         fs.unlink(user.profile_pic.filePath, (error) => {
           console.log(error)
         })
