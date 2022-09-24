@@ -16,6 +16,7 @@ router.post('/', async (req, res) => {
     return res
       .status(200)
       .send({
+        id:user._id,
         profile_pic: user.profile_pic.filePath,
         first_name: user.first_name,
         last_name: user.last_name,
