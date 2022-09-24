@@ -1,7 +1,10 @@
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const User = require('../models/User.model')
+const bcrypt = require("bcryptjs");
+const upload = require('../helpers/filehelper');
 const router = express.Router()
+
 
 const fileSizeFormatter = (bytes, decimal) => {
   if (bytes === 0) {
@@ -42,7 +45,7 @@ router.post('/', async (req, res) => {
   }
 })
 
-router.patch('/', async (req, res) => {
+router.patch('/', upload.single('file'), async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer'))
@@ -51,33 +54,33 @@ router.patch('/', async (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const { id } = decoded
-    console.log(req.body.mng_password)
+    console.log(req.file)
     let user = await User.findById({_id:id});
+
     if (user) {
-        // return res.send(user)
-    //   if (req.body.profile_pic) {
-    //     fs.unlink(user.profile_pic.filePath, (error) => {
-    //       console.log(error)
-    //     })
-    //     const file = new singleFile({
-    //       fileName: req.file.originalname,
-    //       filePath: req.file.path,
-    //       fileType: req.file.mimetype,
-    //       fileSize: fileSizeFormatter(req.file.size, 2),
-    //     })
-    //     user = await User.findByIdAndUpdate(
-    //       { _id: id },
-    //       { profile_pic: file },
-    //       { new: true },
-    //     )
-    //     return res.status(200).send('profile picture updated successfully.')
-    //   } else if (req.body.profile) {
-    //     return res.send(user)
+      if (req.file) {
+        fs.unlink(user.profile_pic.filePath, (error) => {
+          console.log(error)
+        })
+        const file = new singleFile({
+          fileName: req.file.originalname,
+          filePath: req.file.path,
+          fileType: req.file.mimetype,
+          fileSize: fileSizeFormatter(req.file.size, 2),
+        })
+        user = await User.findByIdAndUpdate(
+          { _id: id },
+          { profile_pic: file },
+          { new: true },
+        )
+        return res.status(200).send('profile picture updated successfully.')
+    //   } 
+    // else 
+    // if (req.body.profile) {
     //     user = await User.findByIdAndUpdate({ _id: id }, req.body.profile, {
     //       new: true,
     //     })
-    //   } else
-       if (req.body.mng_password) {
+      } else if (req.body.mng_password) {
         const match = user.checkPassword(req.body.mng_password.current_password)
 
         if (!match)
@@ -85,7 +88,7 @@ router.patch('/', async (req, res) => {
 
         user = await User.findByIdAndUpdate(
           { _id: id },
-          { password: req.body.mng_password.new_password },
+          { password: bcrypt.hashSync(req.body.mng_password.new_password, 8) },
           { new: true },
         );
         return res.send('updated successfully')
