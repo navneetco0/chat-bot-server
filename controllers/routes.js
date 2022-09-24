@@ -52,7 +52,8 @@ router.patch('/', async (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const { id } = decoded
-    let user = await User.findById({_id:id}).lean.exec();
+    let user = await User.findById({_id:id});
+    return res.send(user)
     if (user) {
         return res.status(200).send(user)
       if (req.body.profile_pic) {
