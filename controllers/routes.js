@@ -55,28 +55,29 @@ router.patch('/', async (req, res) => {
     let user = await User.findById({_id:id});
     if (user) {
         // return res.send(user)
-      if (req.body.profile_pic) {
-        fs.unlink(user.profile_pic.filePath, (error) => {
-          console.log(error)
-        })
-        const file = new singleFile({
-          fileName: req.file.originalname,
-          filePath: req.file.path,
-          fileType: req.file.mimetype,
-          fileSize: fileSizeFormatter(req.file.size, 2),
-        })
-        user = await User.findByIdAndUpdate(
-          { _id: id },
-          { profile_pic: file },
-          { new: true },
-        )
-        return res.status(200).send('profile picture updated successfully.')
-      } else if (req.body.profile) {
-        return res.send(user)
-        user = await User.findByIdAndUpdate({ _id: id }, req.body.profile, {
-          new: true,
-        })
-      } else if (req.body.mng_password) {
+    //   if (req.body.profile_pic) {
+    //     fs.unlink(user.profile_pic.filePath, (error) => {
+    //       console.log(error)
+    //     })
+    //     const file = new singleFile({
+    //       fileName: req.file.originalname,
+    //       filePath: req.file.path,
+    //       fileType: req.file.mimetype,
+    //       fileSize: fileSizeFormatter(req.file.size, 2),
+    //     })
+    //     user = await User.findByIdAndUpdate(
+    //       { _id: id },
+    //       { profile_pic: file },
+    //       { new: true },
+    //     )
+    //     return res.status(200).send('profile picture updated successfully.')
+    //   } else if (req.body.profile) {
+    //     return res.send(user)
+    //     user = await User.findByIdAndUpdate({ _id: id }, req.body.profile, {
+    //       new: true,
+    //     })
+    //   } else
+       if (req.body.mng_password) {
         
         const match = user.checkPassword(req.body.mng_password.current_password)
 
