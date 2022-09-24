@@ -53,9 +53,8 @@ router.patch('/', async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const { id } = decoded
     let user = await User.findById({_id:id});
-    return res.send(user)
     if (user) {
-        return res.status(200).send(user)
+        return res.send(user)
       if (req.body.profile_pic) {
         fs.unlink(user.profile_pic.filePath, (error) => {
           console.log(error)
