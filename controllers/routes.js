@@ -2,7 +2,7 @@ const express = require('express')
 
 const router = express.Router()
 
-router.get('/', async (req, res) => {
+router.post('/', async (req, res) => {
   const authHeader = req.headers.authorization
 
   if (!authHeader || !authHeader.startsWith('Bearer'))
