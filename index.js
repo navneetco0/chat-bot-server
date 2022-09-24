@@ -1,8 +1,9 @@
-const port = process.env.PORT || 3001;
+require('dotenv').config();
 const express = require('express');
 const connect = require('./config/db');
 const cors = require('cors');
 const path = require('path');
+const port = process.env.PORT || 3001;
 const upload = require('./helpers/filehelper');
 const {login, register} = require('./controllers/user.controller');
 const routes = require('./controllers/routes');

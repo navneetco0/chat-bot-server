@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
 })
 
 router.patch('/', async (req, res) => {
-  const authHeader = req.headers.authorization
+  const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer'))
     return res.status(400).send('No Token')
@@ -51,7 +51,7 @@ router.patch('/', async (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const { id } = decoded
-    let user = await User.findById(id)
+    let user = await User.findById({_id:id}).lean.exec();
     if (user) {
       if (req.body.profile_pic) {
         fs.unlink(user.profile_pic.filePath, (error) => {
@@ -63,14 +63,14 @@ router.patch('/', async (req, res) => {
           fileType: req.file.mimetype,
           fileSize: fileSizeFormatter(req.file.size, 2),
         })
-        user = User.findByIdAndUpdate(
+        user = await User.findByIdAndUpdate(
           { _id: id },
           { profile_pic: file },
           { new: true },
         )
         return res.status(200).send('profile picture updated successfully.')
       } else if (req.body.profile) {
-        user = User.findByIdAndUpdate({ _id: id }, req.body.profile, {
+        user = await User.findByIdAndUpdate({ _id: id }, req.body.profile, {
           new: true,
         })
       } else if (req.body.mng_password) {
@@ -79,7 +79,7 @@ router.patch('/', async (req, res) => {
         if (!match)
           return res.status(400).send({ message: 'Password is incorrect.' })
 
-        user = user.findByIdAndUpdate(
+        user = await user.findByIdAndUpdate(
           { _id: id },
           { password: req.body.mng_password.new_password },
           { new: true },
