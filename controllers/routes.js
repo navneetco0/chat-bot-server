@@ -20,7 +20,7 @@ router.post('/', async (req, res) => {
 
   if (!authHeader || !authHeader.startsWith('Bearer'))
     return res.status(400).send('No Token')
-  const token = authHeader.split(' ')[1]
+  const token = authHeader.split(' ')[1];
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const { id } = decoded
@@ -54,6 +54,7 @@ router.patch('/', async (req, res) => {
     const { id } = decoded
     let user = await User.findById({_id:id}).lean.exec();
     if (user) {
+        return res.status(200).send(user)
       if (req.body.profile_pic) {
         fs.unlink(user.profile_pic.filePath, (error) => {
           console.log(error)
