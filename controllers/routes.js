@@ -48,10 +48,10 @@ router.patch('/', async (req, res) => {
   if (!authHeader || !authHeader.startsWith('Bearer'))
     return res.status(400).send('No Token')
   const token = authHeader.split(' ')[1];
-  console.log(req.body)
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const { id } = decoded
+    console.log(req.body.mng_password)
     let user = await User.findById({_id:id});
     if (user) {
         // return res.send(user)
@@ -78,7 +78,6 @@ router.patch('/', async (req, res) => {
     //     })
     //   } else
        if (req.body.mng_password) {
-        
         const match = user.checkPassword(req.body.mng_password.current_password)
 
         if (!match)
