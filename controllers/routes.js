@@ -83,7 +83,7 @@ router.patch('/', async (req, res) => {
         if (!match)
           return res.status(400).send({ message: 'Password is incorrect.' })
 
-        user = await user.findByIdAndUpdate(
+        user = await User.findByIdAndUpdate(
           { _id: id },
           { password: req.body.mng_password.new_password },
           { new: true },
