@@ -94,7 +94,7 @@ const register = async (req, res) => {
           { id: user._id, username: user.username },
           process.env.JWT_SECRET
         )
-      await Chats.create({user_id:user._id});
+      await Chats.create({user_id:user._id, chats:['63318232de6272d98904af80']});
       }
       return res.status(201).send({ token })
     } catch (err) {

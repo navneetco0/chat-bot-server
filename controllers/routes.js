@@ -150,10 +150,11 @@ router.post('/chats', async(req, res)=>{
     const user = await User.findById(id).lean().exec();
     if(user){
       let bot = await Bot.findById(req.body.id).lean().exec();
-      let chat = await Chats.find({user_id:id}).lean().exec();
-       chat = [...chat, req.body.input, bot?req.body.id:'I am in learning phase, please go through option. please type menu for menu'];
-       chat = await Chats.patch({user_id:id}, {chats:chat}, {new:true});
-      console.log(chat);
+      let chats = await Chats.find({user_id:id}).lean().exec();
+      console.log(chats.chats);
+       let chat = [...chats.chats, req.body.input, bot?req.body.id:'I am in learning phase, please go through option. please type menu for menu'];
+       console.log(chat)
+       await Chats.findByIdAndUpdate({_id:chats._id}, {chats:chat}, {new:true});
       return res.send('successfull');
     }
     else return res.send('invalid credentials.')
