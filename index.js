@@ -7,7 +7,8 @@ const upload = require('./helpers/filehelper')
 const { io, server, app } = require('./server')
 const { login, register } = require('./controllers/user.controller')
 const routes = require('./controllers/routes')
-const Bot = require('./models/bot.model')
+const Bot = require('./models/bot.model');
+const Chat = require('./models/userintraction');
 
 app.use(express.json())
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
@@ -17,9 +18,12 @@ app.use('/', routes)
 
 io.on('connection', (socket) => {
   console.log(`User Connected: ${socket.id}`)
-  Bot.findById('63318232de6272d98904af80').then((result) =>
-    io.emit('welcome', result),
-  )
+  socket.on('welcome', (msg)=>{
+    console.log('msg', msg)
+     Chat.find({user_id:msg}).then(result=>{
+      
+     })
+  })
   socket.on('responce me', (msg) => {
     Bot.findById(msg).then((result) => {
       if (result) io.emit(msg, result) 
