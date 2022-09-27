@@ -2,7 +2,8 @@ require('dotenv').config()
 const express = require('express')
 const connect = require('./config/db')
 const path = require('path')
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3000;
+const cors = require('cors');
 const upload = require('./helpers/filehelper')
 const { io, server, app } = require('./server')
 const { login, register } = require('./controllers/user.controller')
@@ -15,6 +16,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.post('/login', login)
 app.post('/register', upload.single('file'), register)
 app.use('/', routes)
+app.use(cors());
 
 io.on('connection', (socket) => {
   console.log(`User Connected: ${socket.id}`)
