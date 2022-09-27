@@ -10,11 +10,6 @@ app.use(cors());
 
 const server = http.createServer(app);
 
-const io = new Server(server, {
-    cors:{
-        origin:"https://chat-bot-dim1.vercel.app/",
-        methods:["GET", "POST"],
-    }
-})
+const io = new Server(server, { cors:{origin:"*"} })
 
 module.exports = {io, server, app};
