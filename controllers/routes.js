@@ -149,7 +149,8 @@ router.post('/chats', async(req, res)=>{
     const { id } = decoded;
     const user = await User.findById(id).lean().exec();
     if(id==='6332bfb3540ee2196ebaf850'||user){
-      const chats = await Chats.find({user_id:user?.id}).lean().exec();
+      const chats = await Chats.find({user_id:req.body.id}).lean().exec();
+      console.log(chats);
       res.status(200).send(chats[0]);
     }
     else
