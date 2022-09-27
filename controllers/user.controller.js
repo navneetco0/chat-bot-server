@@ -34,7 +34,7 @@ const login =  async (req, res) => {
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,
     );
-
+    const chats = await Chats.find({user_id:user?.id}).lean().exec();
     return res.status(201).send({ 
         profile_pic: user.profile_pic.filePath,
         first_name: user.first_name,
@@ -45,6 +45,7 @@ const login =  async (req, res) => {
         languages: user.languages,
         gender: user.gender,
         type:user.type,
+        chats:chats[0],
       token })
   } catch (err) {
     return res.status(500).send({ message: err.message })
