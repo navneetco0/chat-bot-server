@@ -42,6 +42,7 @@ const login =  async (req, res) => {
         dob: user.dob,
         languages: user.languages,
         gender: user.gender,
+        type:user.type,
       token })
   } catch (err) {
     return res.status(500).send({ message: err.message })

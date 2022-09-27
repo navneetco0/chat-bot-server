@@ -12,7 +12,8 @@ const userSchema = new mongoose.Schema(
     password: {type:String, required:true},
     dob: {type:String, required: true},
     languages: [{ type: String, required:true}],
-    gender: {type: String, required:true}
+    type:{type:String, default:'normal'},
+    gender: {type: String, default:'Male'}
   },
   {
     versionKey: false,

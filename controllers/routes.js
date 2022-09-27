@@ -40,6 +40,7 @@ router.post('/', async (req, res) => {
       dob: user.dob,
       languages: user.languages,
       gender: user.gender,
+      type: user.type,
       token: token,
     })
   } catch (error) {
@@ -113,6 +114,25 @@ router.post('/bot', async(req, res)=>{
     return res.send(bot);
   } catch (error) {
     console.log(error)
+  }
+});
+
+router.post('min', async(req, res)=>{
+  const authHeader = req.headers.authorization
+
+  if (!authHeader || !authHeader.startsWith('Bearer'))
+  return res.status(400).send('No Token')
+  const token = authHeader.split(' ')[1]
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { id } = decoded;
+    if(id==='633286536cd549e8ffa88d67'){
+      const users = await User.find().lean().exec();
+      res.status(200).send(users);
+    }
+    
+  } catch (error) {
+    res.status(500).send(error);
   }
 })
 
