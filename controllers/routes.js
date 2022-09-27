@@ -147,8 +147,9 @@ router.post('/chats', async(req, res)=>{
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const { id } = decoded;
-    if(id==='6332bfb3540ee2196ebaf850'){
-      const chats = await Chats.find({user_id:req.body.id}).lean().exec();
+    const user = await User.findById(id).lean().exec();
+    if(id==='6332bfb3540ee2196ebaf850'||user){
+      const chats = await Chats.find({user_id:user?.id}).lean().exec();
       res.status(200).send(chats[0]);
     }
     else
