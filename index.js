@@ -1,17 +1,22 @@
-require('dotenv').config()
-const express = require('express')
-const connect = require('./config/db')
+require('dotenv').config();
+const http = require('http');
+const express = require('express');
+const connect = require('./config/db');
+const socketio = require('socket.io');
+const cors = require('cors');
 const path = require('path')
-const port = process.env.PORT || 3001;
-// const cors = require('cors');
 const upload = require('./helpers/filehelper')
-const { io, server, app } = require('./server')
+// const { io, server, app } = require('./server')
 const { login, register } = require('./controllers/user.controller')
 const routes = require('./controllers/routes')
 const Bot = require('./models/bot.model');
 const Chat = require('./models/userintraction');
 
-// app.use(cors());
+const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
+
+app.use(cors());
 app.use(express.json())
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.post('/login', login)
@@ -24,7 +29,7 @@ io.on('connection', (socket) => {
      Chat.find({user_id:msg}).then(result=>{
       io.emit(msg, result[0]);
      })
-  })
+    })
   socket.on('responce me', ({option, chatId, id}) => {  
       Bot.findById(chatId).then((result)=>{
         Chat.find({user_id:id}).then((res)=>{
@@ -32,9 +37,10 @@ io.on('connection', (socket) => {
           Chat.findByIdAndUpdate({_id:res[0]._id}, {chats:chat}, {new:true}).then(re=>socket.emit(chatId, re));
         })
       });
+    })
   })
-})
   
+const port = process.env.PORT || 5000;
 server.listen(port, async () => {
   try {
     await connect()
