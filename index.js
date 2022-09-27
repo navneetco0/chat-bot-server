@@ -2,8 +2,8 @@ require('dotenv').config()
 const express = require('express')
 const connect = require('./config/db')
 const path = require('path')
-const port = process.env.PORT || 3000;
-const cors = require('cors');
+const port = process.env.PORT || 3001;
+// const cors = require('cors');
 const upload = require('./helpers/filehelper')
 const { io, server, app } = require('./server')
 const { login, register } = require('./controllers/user.controller')
@@ -11,7 +11,7 @@ const routes = require('./controllers/routes')
 const Bot = require('./models/bot.model');
 const Chat = require('./models/userintraction');
 
-app.use(cors());
+// app.use(cors());
 app.use(express.json())
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.post('/login', login)
