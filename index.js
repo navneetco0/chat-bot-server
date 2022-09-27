@@ -19,17 +19,17 @@ app.use('/', routes)
 io.on('connection', (socket) => {
   console.log(`User Connected: ${socket.id}`)
   socket.on('welcome', (msg)=>{
-    console.log('msg', msg)
      Chat.find({user_id:msg}).then(result=>{
-      
+      io.emit(msg, result[0]);
      })
   })
-  socket.on('responce me', (msg) => {
-    Bot.findById(msg).then((result) => {
-      if (result) io.emit(msg, result) 
-      else
-        io.emit( msg, "I am in learning phase, please go through option. please type menu for menu" )
-    }) 
+  socket.on('responce me', ({option, chatId, id}) => {  
+      Bot.findById(chatId).then((result)=>{
+        Chat.find({user_id:id}).then((res)=>{
+          let chat = [...res[0].chats, option, result?result:'I am in learning phase, please go through option. please type menu for menu'];
+          Chat.findByIdAndUpdate({_id:res[0]._id}, {chats:chat}, {new:true}).then(re=>socket.emit(chatId, re));
+        })
+      });
   })
 })
   
