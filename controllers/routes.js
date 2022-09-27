@@ -6,7 +6,9 @@ const bcrypt = require('bcryptjs')
 const upload = require('../helpers/filehelper')
 const singleFile = require('../models/profilepic')
 const Bot = require('../models/bot.model');
-const router = express.Router()
+const router = express.Router();
+const Chats = require('../models/userintraction')
+const { brotliCompressSync } = require('zlib')
 
 const fileSizeFormatter = (bytes, decimal) => {
   if (bytes === 0) {
@@ -117,20 +119,44 @@ router.post('/bot', async(req, res)=>{
   }
 });
 
-router.post('min', async(req, res)=>{
+router.post('/min', async(req, res)=>{
   const authHeader = req.headers.authorization
-
   if (!authHeader || !authHeader.startsWith('Bearer'))
-  return res.status(400).send('No Token')
-  const token = authHeader.split(' ')[1]
+     return res.status(400).send('No Token')
+  const token = authHeader.split(' ')[1];
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const { id } = decoded;
-    if(id==='633286536cd549e8ffa88d67'){
-      const users = await User.find().lean().exec();
+    if(id==='6332bfb3540ee2196ebaf850'){
+      const users = await User.find({type:'normal'}).lean().exec();
       res.status(200).send(users);
     }
+    else
+      res.status(200).send('you are not authorized person')
     
+  } catch (error) {
+    res.status(500).send(error);
+  }
+})
+
+router.post('/chats', async(req, res)=>{
+  const authHeader = req.headers.authorization
+  if (!authHeader || !authHeader.startsWith('Bearer'))
+     return res.status(400).send('No Token');
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { id } = decoded;
+    const user = await User.findById(id).lean().exec();
+    if(user){
+      let bot = await Bot.findById(req.body.id).lean().exec();
+      let chat = await Chats.find({user_id:id}).lean().exec();
+       chat = [...chat, req.body.input, bot?req.body.id:'I am in learning phase, please go through option. please type menu for menu'];
+       chat = await Chats.patch({user_id:id}, {chats:chat}, {new:true});
+      console.log(chat);
+      return res.send('successfull');
+    }
+    else return res.send('invalid credentials.')
   } catch (error) {
     res.status(500).send(error);
   }

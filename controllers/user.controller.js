@@ -1,7 +1,8 @@
 require('dotenv').config()
 const User = require('../models/User.model')
 const jwt = require('jsonwebtoken')
-const singleFile = require('../models/profilepic')
+const singleFile = require('../models/profilepic');
+const Chats = require('../models/userintraction')
 
 const fileSizeFormatter = (bytes, decimal)=>{
   if(bytes===0){
@@ -89,10 +90,12 @@ const register = async (req, res) => {
       })
       let token
       if (user)
-        token = jwt.sign(
+       { token = jwt.sign(
           { id: user._id, username: user.username },
           process.env.JWT_SECRET
         )
+      await Chats.create({user_id:user._id});
+      }
       return res.status(201).send({ token })
     } catch (err) {
       return res.status(500).send({ message: err.message })
