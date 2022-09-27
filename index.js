@@ -11,12 +11,12 @@ const routes = require('./controllers/routes')
 const Bot = require('./models/bot.model');
 const Chat = require('./models/userintraction');
 
+app.use(cors());
 app.use(express.json())
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.post('/login', login)
 app.post('/register', upload.single('file'), register)
 app.use('/', routes)
-app.use(cors());
 
 io.on('connection', (socket) => {
   console.log(`User Connected: ${socket.id}`)
